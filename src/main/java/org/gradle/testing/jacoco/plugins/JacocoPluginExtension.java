@@ -15,7 +15,6 @@
  */
 package org.gradle.testing.jacoco.plugins;
 
-import groovy.lang.GroovyObjectSupport;
 import org.gradle.api.Action;
 import org.gradle.api.Incubating;
 import org.gradle.api.Project;
@@ -35,12 +34,12 @@ import java.util.concurrent.Callable;
  * Extension including common properties and methods for Jacoco.
  */
 @Incubating
-public class JacocoPluginExtension extends GroovyObjectSupport {
+public class JacocoPluginExtension {
 
     public static final String TASK_EXTENSION_NAME = "jacoco";
 
-    private final Logger logger = Logging.getLogger(getClass());
-    private final Project project;
+    private Logger logger = Logging.getLogger(getClass());
+    protected final Project project;
     private final JacocoAgentJar agent;
 
     private String toolVersion = "0.7.6.201602180812";
@@ -120,5 +119,23 @@ public class JacocoPluginExtension extends GroovyObjectSupport {
                 applyTo(Cast.<T>uncheckedCast(task));
             }
         });
+    }
+
+    /**
+     * Logger
+     * @deprecated logger should be considered final.
+     */
+    @Deprecated
+    public Logger getLogger() {
+        return logger;
+    }
+
+    /**
+     * Logger
+     * @deprecated logger should be considered final.
+     */
+    @Deprecated
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 }

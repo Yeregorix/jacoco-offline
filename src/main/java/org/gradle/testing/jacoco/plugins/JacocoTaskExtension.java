@@ -17,7 +17,6 @@
 package org.gradle.testing.jacoco.plugins;
 
 import com.google.common.base.Joiner;
-import groovy.lang.GroovyObjectSupport;
 import org.gradle.api.Incubating;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
@@ -34,12 +33,12 @@ import java.util.List;
  * Extension for tasks that should run with a Jacoco agent to generate coverage execution data.
  */
 @Incubating
-public class JacocoTaskExtension extends GroovyObjectSupport {
+public class JacocoTaskExtension {
 
     /**
      * The types of output that the agent can use for execution data.
      */
-    enum Output {
+    public enum Output {
         FILE,
         TCP_SERVER,
         TCP_CLIENT,
@@ -48,12 +47,12 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         /**
          * Gets type in format of agent argument.
          */
-        String getAsArg() {
+        public String getAsArg() {
             return toString().toLowerCase().replaceAll("_", "");
         }
     }
 
-    private final JacocoAgentJar agent;
+    private JacocoAgentJar agent;
     private final JavaForkOptions task;
 
     private boolean enabled = true;
@@ -82,10 +81,14 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         this.task = task;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     /**
      * Whether or not the task should generate execution data. Defaults to {@code true}.
      */
-    public boolean isEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
@@ -104,10 +107,14 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         this.destinationFile = destinationFile;
     }
 
+    public boolean isAppend() {
+        return append;
+    }
+
     /**
      * Whether or not data should be appended if the {@code destinationFile} already exists. Defaults to {@code true}.
      */
-    public boolean isAppend() {
+    public boolean getAppend() {
         return append;
     }
 
@@ -148,12 +155,16 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         this.excludeClassLoaders = excludeClassLoaders;
     }
 
+    public boolean isIncludeNoLocationClasses() {
+        return includeNoLocationClasses;
+    }
+
     /**
      * Whether or not classes without source location should be instrumented. Defaults to {@code false}.
      *
      * This property is only taken into account if the used JaCoCo version supports this option (JaCoCo version >= 0.7.6)
      */
-    public boolean isIncludeNoLocationClasses() {
+    public boolean getIncludeNoLocationClasses() {
         return includeNoLocationClasses;
     }
 
@@ -172,10 +183,14 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         this.sessionId = sessionId;
     }
 
+    public boolean isDumpOnExit() {
+        return dumpOnExit;
+    }
+
     /**
      * Whether or not to dump the coverage data at VM shutdown. Defaults to {@code true}.
      */
-    public boolean isDumpOnExit() {
+    public boolean getDumpOnExit() {
         return dumpOnExit;
     }
 
@@ -208,11 +223,11 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
     /**
      * Port to bind to for {@link Output#TCP_SERVER} or {@link Output#TCP_CLIENT}. Defaults to 6300.
      */
-    public Integer getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(Integer port) {
+    public void setPort(int port) {
         this.port = port;
     }
 
@@ -227,17 +242,39 @@ public class JacocoTaskExtension extends GroovyObjectSupport {
         this.classDumpFile = classDumpFile;
     }
 
+    public boolean isJmx() {
+        return jmx;
+    }
+
     /**
      * Whether or not to expose functionality via JMX under {@code org.jacoco:type=Runtime}. Defaults to {@code false}.
      *
      * The configuration of the jmx property is only taken into account if the used JaCoCo version supports this option (JaCoCo version >= 0.6.2)
      */
-    public boolean isJmx() {
+    public boolean getJmx() {
         return jmx;
     }
 
     public void setJmx(boolean jmx) {
         this.jmx = jmx;
+    }
+
+    /**
+     * agent
+     * @deprecated Agent should be considered final.
+     */
+    @Deprecated
+    public JacocoAgentJar getAgent() {
+        return agent;
+    }
+
+    /**
+     * agent
+     * @deprecated Agent should be considered final.
+     */
+    @Deprecated
+    public void setAgent(JacocoAgentJar agent) {
+        this.agent = agent;
     }
 
     /**
