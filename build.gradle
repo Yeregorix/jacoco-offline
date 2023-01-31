@@ -58,40 +58,42 @@ gradlePlugin {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) { publication ->
-            artifactId = 'jacoco-offline'
-            from components.java
-
+        pluginMaven(MavenPublication) {
             pom {
                 name = 'JacocoOffline'
                 packaging = 'jar'
-                description = "Fork of the official Jacoco plugin that supports offline instrumentation."
-                url = 'https://github.com/Yeregorix/gradle/tree/jacoco-offline'
+            }
+        }
+    }
 
-                scm {
-                    connection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
-                    developerConnection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
-                    url = 'https://github.com/Yeregorix/jacoco-offline'
+    publications.withType(MavenPublication) {
+        pom {
+            description = "Fork of the official Jacoco plugin that supports offline instrumentation."
+            url = 'https://github.com/Yeregorix/jacoco-offline'
+
+            scm {
+                connection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
+                developerConnection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
+                url = 'https://github.com/Yeregorix/jacoco-offline'
+            }
+
+            licenses {
+                license {
+                    name = 'The Apache License, Version 2.0'
+                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                 }
+            }
 
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
+            developers {
+                developer {
+                    name = 'The Gradle team'
+                    organization = 'Gradle Inc.'
+                    organizationUrl = 'https://gradle.org'
                 }
-
-                developers {
-                    developer {
-                        name = 'The Gradle team'
-                        organization = 'Gradle Inc.'
-                        organizationUrl = 'https://gradle.org'
-                    }
-                    developer {
-                        id = 'Yeregorix'
-                        name = 'Hugo Dupanloup'
-                        email = 'yeregorix@smoofyuniverse.net'
-                    }
+                developer {
+                    id = 'Yeregorix'
+                    name = 'Hugo Dupanloup'
+                    email = 'yeregorix@smoofyuniverse.net'
                 }
             }
         }
@@ -114,6 +116,6 @@ publishing {
 if (project.hasProperty("signing.keyId")) {
     apply plugin: 'signing'
     signing {
-        sign publishing.publications.mavenJava
+        sign publishing.publications.pluginMaven
     }
 }
