@@ -1,0 +1,119 @@
+plugins {
+    id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'net.smoofyuniverse'
+version '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "utf-8"
+}
+
+jar {
+    archiveClassifier = "base"
+}
+
+shadowJar {
+    archiveClassifier = ""
+    relocate 'org.gradle.internal.jacoco', 'net.smoofyuniverse.internal.jacoco'
+    relocate 'org.gradle.testing.jacoco', 'net.smoofyuniverse.testing.jacoco'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    shadow 'com.google.guava:guava:31.1-jre'
+    shadow 'commons-lang:commons-lang:2.6'
+}
+
+gradlePlugin {
+    website = 'https://github.com/Yeregorix/jacoco-offline'
+    vcsUrl = 'https://github.com/Yeregorix/jacoco-offline.git'
+    plugins {
+        JacocoOffline {
+            id = 'net.smoofyuniverse.jacoco-offline'
+            displayName = 'JacocoOffline'
+            description = 'Fork of the official Jacoco plugin that supports offline instrumentation.'
+            implementationClass = 'net.smoofyuniverse.testing.jacoco.plugins.JacocoPlugin'
+            tags.addAll('jacoco', 'offline', 'instrumentation')
+        }
+        JacocoReportAggregationOffline {
+            id = 'net.smoofyuniverse.jacoco-report-aggregation-offline'
+            displayName = 'JacocoReportAggregationOffline'
+            description = 'Fork of the official Jacoco plugin that supports offline instrumentation.'
+            implementationClass = 'net.smoofyuniverse.testing.jacoco.plugins.JacocoReportAggregationPlugin'
+            tags.addAll('jacoco', 'offline', 'instrumentation')
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) { publication ->
+            artifactId = 'jacoco-offline'
+            from components.java
+
+            pom {
+                name = 'JacocoOffline'
+                packaging = 'jar'
+                description = "Fork of the official Jacoco plugin that supports offline instrumentation."
+                url = 'https://github.com/Yeregorix/gradle/tree/jacoco-offline'
+
+                scm {
+                    connection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
+                    developerConnection = 'scm:git:https://github.com/Yeregorix/jacoco-offline.git'
+                    url = 'https://github.com/Yeregorix/jacoco-offline'
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = 'The Gradle team'
+                        organization = 'Gradle Inc.'
+                        organizationUrl = 'https://gradle.org'
+                    }
+                    developer {
+                        id = 'Yeregorix'
+                        name = 'Hugo Dupanloup'
+                        email = 'yeregorix@smoofyuniverse.net'
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ?
+                "https://oss.sonatype.org/content/repositories/snapshots/"
+                : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+            credentials {
+                username findProperty('ossrhUsername')
+                password findProperty('ossrhPassword')
+            }
+        }
+    }
+}
+
+if (project.hasProperty("signing.keyId")) {
+    apply plugin: 'signing'
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
